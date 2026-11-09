@@ -1,13 +1,3 @@
-# services:
-#   db: 
-#     image: postgress:17
-#     environment:
-#       - POSTGRESS_USER: fider
-#       - POSTGRESS_PASSWORD: fider_pw
-#       - POSTGRESS_DB: fider
-#     volumes:
-#       -
-
 services:
   db:
     image: postgres:18
