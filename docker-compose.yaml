@@ -14,16 +14,16 @@ services:
       retries: 10
 
   mailpit:
-     image: axllent/mailpit
-     ports:
+    image: axllent/mailpit
+    ports:
        - "8025:8025"
 
   migrate:
     build:
-      context: .                       # repo root = build context
+      context: .                       
       dockerfile: docker/Dockerfile
     image: fider:local
-    command: ["migrate"]          # runs ./fider migrate, then exits
+    command: ["migrate"]          
     env_file: .env
     depends_on:
       db:
@@ -32,9 +32,9 @@ services:
     
   app:
     build:
-      context: .                       # repo root = build context
-      dockerfile: docker/Dockerfile    # your Dockerfile
-    image: fider:local                 # name the image it builds
+      context: .                       
+      dockerfile: docker/Dockerfile    
+    image: fider:local                 
     env_file: .env
     ports:
       - "3000:3000"
