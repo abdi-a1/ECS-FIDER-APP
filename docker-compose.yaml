@@ -1,0 +1,57 @@
+# services:
+#   db: 
+#     image: postgress:17
+#     environment:
+#       - POSTGRESS_USER: fider
+#       - POSTGRESS_PASSWORD: fider_pw
+#       - POSTGRESS_DB: fider
+#     volumes:
+#       -
+
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: fider
+      POSTGRES_PASSWORD: fider_pw
+      POSTGRES_DB: fider
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fider -d fider"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mailpit:
+     image: axllent/mailpit
+     ports:
+       - "8025:8025"
+
+  migrate:
+    build:
+      context: .                       # repo root = build context
+      dockerfile: docker/Dockerfile
+    image: fider:local
+    command: ["migrate"]          # runs ./fider migrate, then exits
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+       
+    
+  app:
+    build:
+      context: .                       # repo root = build context
+      dockerfile: docker/Dockerfile    # your Dockerfile
+    image: fider:local                 # name the image it builds
+    env_file: .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+
+volumes:
+  postgres_data:
